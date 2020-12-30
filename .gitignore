@@ -36,3 +36,4 @@ override.tf.json
 
 your_function_name.zip
 .DS_Store
+.terraform.lock.hcl
