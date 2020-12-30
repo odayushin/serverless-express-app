@@ -1,21 +1,51 @@
 version: 2.1
-
-orbs:
-  python: circleci/python@0.2.1
-
 jobs:
-  build-and-test:
-    executor: python/default
+  test:
+    working_directory: ~/work
+    docker:
+      - image: yushinoda/terraform_npm:latest
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
       - run:
-          command: ./manage.py test
-          name: Test
-
+          name: npm install
+          command: cd lambda && npm install && cd ..
+      - run:
+          name: Init terraform
+          command: terraform init
+      - run:
+          name: Validate terraform
+          command: terraform validate
+      - run:
+          name: Plan terraform
+          command: terraform plan
+  deploy:
+    working_directory: ~/work
+    docker:
+      - image: yushinoda/terraform_npm:latest
+    steps:
+      - checkout
+      - run:
+          name: npm install
+          command: cd lambda && npm install && cd ..
+      - run:
+          name: Init terraform
+          command: terraform init
+      - run:
+          name: Apply terraform
+          command: terraform apply -auto-approve
 workflows:
-  main:
+  version: 2
+  plan:
     jobs:
-      - build-and-test
+      - test:
+          context: aws_yushin0425
+          filters:
+            branches:
+              ignore: release
+  deploy:
+    jobs:
+      - deploy:
+          context: aws_yushin0425
+          filters:
+            branches:
+              only: release
