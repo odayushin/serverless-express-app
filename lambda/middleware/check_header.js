@@ -1,6 +1,6 @@
 function check_header(req, res, next) {
   if (req.headers["authtoken"] != "allow") {
-    res.status(404).send({ message: "NG" });
+    res.status(401).send({ message: "NG" });
     return;
   }
   next();
