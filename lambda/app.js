@@ -8,7 +8,7 @@ app.use(cors());
 app.use(serverlessExpress.eventContext());
 
 app.use(check_header);
-app.post("/", (req, res) => {
+app.get("/", (req, res) => {
   if (req.query["count"]) {
     res.send({ message: "Hello World".repeat(req.query.count) });
   } else {
